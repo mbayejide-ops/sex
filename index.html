@@ -2,128 +2,75 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>NightFlix</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NightFlix — Video Library</title>
 <style>
-*{box-sizing:border-box}body{margin:0;background:#08090d;color:#eee;font-family:Arial,sans-serif}
-header{padding:22px 18px;text-align:center;background:linear-gradient(180deg,#11131b,#08090d)}
-h1{margin:0 0 14px;font-size:30px}.sub{color:#9da3b0;font-size:14px}
-.controls{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:18px}
-input,select{background:#151821;color:#fff;border:1px solid #292e3a;border-radius:10px;padding:11px 13px;outline:none}
-main{max-width:1200px;margin:auto;padding:22px 14px}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}
-.card{background:#11131a;border:1px solid #20232d;border-radius:14px;overflow:hidden;cursor:pointer;transition:.2s}
-.card:hover{transform:translateY(-3px);border-color:#3b4252}
-.thumb{aspect-ratio:16/9;background:#050609;position:relative;overflow:hidden}
-.thumb video{width:100%;height:100%;object-fit:cover;display:block}
-.play{position:absolute;inset:0;display:grid;place-items:center;font-size:42px;text-shadow:0 2px 12px #000;pointer-events:none}
-.info{padding:12px}.title{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.meta{margin-top:7px;color:#8f96a4;font-size:12px}
-.empty{text-align:center;color:#888;padding:50px}
-.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:10;padding:20px}
-.modal.show{display:flex;align-items:center;justify-content:center}
-.playerbox{width:min(1000px,100%);position:relative}
-.close{position:absolute;right:0;top:-42px;border:0;background:none;color:#fff;font-size:32px;cursor:pointer}
-.driveframe{width:100%;height:min(70vh,650px);border:0;border-radius:10px;background:#000}
-.note{color:#8f96a4;font-size:12px;text-align:center;margin-top:10px}
+*{box-sizing:border-box}body{margin:0;background:#07080c;color:#f5f7fb;font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif}
+header{position:sticky;top:0;z-index:10;background:rgba(7,8,12,.88);backdrop-filter:blur(18px);border-bottom:1px solid #1b1e27}
+.nav{max-width:1200px;margin:auto;padding:18px 20px;display:flex;gap:16px;align-items:center}.logo{font-size:23px;font-weight:800;letter-spacing:-.5px}.logo span{color:#7c5cff}
+.search{margin-left:auto;width:min(360px,55vw);background:#11131a;border:1px solid #252936;border-radius:12px;padding:11px 14px;color:white;outline:none}
+main{max-width:1200px;margin:auto;padding:28px 20px 60px}.hero{padding:34px 0 24px}.hero h1{font-size:clamp(32px,6vw,56px);margin:0 0 10px}.hero p{color:#9da4b4;margin:0;max-width:650px}
+.toolbar{display:flex;gap:9px;flex-wrap:wrap;margin:20px 0}.filter{border:1px solid #272b36;background:#11131a;color:#cbd0db;border-radius:999px;padding:8px 14px;cursor:pointer}.filter.active{background:#7c5cff;border-color:#7c5cff;color:white}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:18px}.card{background:#101219;border:1px solid #20232d;border-radius:16px;overflow:hidden;cursor:pointer;transition:.2s}.card:hover{transform:translateY(-3px);border-color:#393e4d}.thumb{aspect-ratio:16/10;background:#171a22;display:grid;place-items:center;color:#6f7686;font-size:36px}.info{padding:14px}.title{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.meta{font-size:13px;color:#858c9b;margin-top:7px}
+.empty{text-align:center;padding:70px 10px;color:#858c9b}.modal{position:fixed;inset:0;background:rgba(0,0,0,.8);display:none;align-items:center;justify-content:center;padding:18px;z-index:30}.modal.show{display:flex}.box{width:min(1050px,100%);background:#0d0f15;border:1px solid #282c38;border-radius:18px;overflow:hidden}.player{aspect-ratio:16/9;background:#000}.player iframe{width:100%;height:100%;border:0}.modalbar{padding:14px 16px;display:flex;align-items:center;gap:12px}.modalbar h2{margin:0;font-size:18px}.close{margin-left:auto;background:#20232d;border:0;color:#fff;border-radius:10px;padding:9px 13px;cursor:pointer}
+@media(max-width:600px){.nav{padding:14px}.search{width:48vw}.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.info{padding:11px}.hero{padding-top:20px}}
 </style>
 </head>
 <body>
-<header>
-  <h1>🌙 NightFlix</h1>
-  <div class="sub">Your personal video library</div>
-  <div class="controls">
-    <input id="search" placeholder="Search videos...">
-    <select id="category"><option value="all">All categories</option></select>
-  </div>
-</header>
-
-<main><div id="grid" class="grid"></div><div id="empty" class="empty" style="display:none">No videos found.</div></main>
-
-<div id="modal" class="modal">
-  <div class="playerbox">
-    <button class="close" id="close">×</button>
-    <iframe id="frame" class="driveframe"
-      allow="autoplay; fullscreen"
-      allowfullscreen
-      referrerpolicy="no-referrer-when-downgrade"></iframe>
-    <div class="note">Playing through Google Drive's built-in viewer.</div>
-  </div>
-</div>
-
+<header><div class="nav"><div class="logo">Night<span>Flix</span></div><input id="search" class="search" placeholder="Search videos..."></div></header>
+<main>
+<section class="hero"><h1>Your video library.</h1><p>Add your video title and Google Drive link inside <b>videos/videos.json</b>. The website will automatically display them here.</p></section>
+<div class="toolbar" id="filters"></div>
+<section id="grid" class="grid"></section>
+<div id="empty" class="empty" hidden>No videos found.</div>
+</main>
+<div id="modal" class="modal"><div class="box"><div class="player"><iframe id="frame" allow="autoplay; fullscreen" allowfullscreen></iframe></div><div class="modalbar"><h2 id="modalTitle"></h2><button class="close" onclick="closePlayer()">Close</button></div></div></div>
 <script>
-let videos=[];
-const grid=document.getElementById('grid');
-const empty=document.getElementById('empty');
-const search=document.getElementById('search');
-const category=document.getElementById('category');
-const modal=document.getElementById('modal');
-const frame=document.getElementById('frame');
+let videos=[], active="All";
+const $=id=>document.getElementById(id);
 
-function fileId(url){
-  if(!url) return '';
-  let m=url.match(/\/d\/([^/?]+)/);
-  if(m) return m[1];
-  m=url.match(/[?&]id=([^&]+)/);
-  return m ? m[1] : '';
+function driveEmbed(url){
+  if(!url) return "";
+  // Supports normal Drive sharing URLs and already-embedded URLs.
+  const m=url.match(/\/file\/d\/([^/]+)/);
+  if(m) return `https://drive.google.com/file/d/${m[1]}/preview`;
+  const id=url.match(/[?&]id=([^&]+)/);
+  if(id) return `https://drive.google.com/file/d/${id[1]}/preview`;
+  if(url.includes("drive.google.com")) return url.replace(/\/view.*$/,"/preview");
+  return url;
 }
-function previewUrl(url){
-  const id=fileId(url);
-  return id ? `https://drive.google.com/file/d/${encodeURIComponent(id)}/preview` : '';
+function categories(){
+  const set=["All",...new Set(videos.map(v=>v.category||"Other"))];
+  $("filters").innerHTML=set.map(x=>`<button class="filter ${x===active?"active":""}" onclick="setFilter('${esc(x)}')">${esc(x)}</button>`).join("");
 }
-function escapeHtml(s){
-  return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
-}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
 function render(){
-  const q=search.value.toLowerCase().trim();
-  const cat=category.value;
-  const list=videos.filter(v=>{
-    const okQ=!q || `${v.title||''} ${v.description||''}`.toLowerCase().includes(q);
-    const okC=cat==='all' || (v.category||'Other')===cat;
-    return okQ && okC;
-  });
-  grid.innerHTML=list.map((v,i)=>{
-    const id=fileId(v.url);
-    return `<article class="card" data-index="${videos.indexOf(v)}">
-      <div class="thumb">
-        ${id ? `<iframe loading="lazy" src="${previewUrl(v.url)}" style="width:100%;height:100%;border:0;pointer-events:none" allow="autoplay"></iframe>` : ''}
-        <div class="play">▶</div>
+  const q=$("search").value.trim().toLowerCase();
+  const list=videos.filter(v=>(active==="All"||(v.category||"Other")===active)&&
+    (`${v.title} ${v.category||""} ${v.description||""}`).toLowerCase().includes(q));
+  $("grid").innerHTML=list.map((v,i)=>`
+    <article class="card" onclick="openPlayer(${videos.indexOf(v)})">
+      <div class="thumb">▶</div><div class="info">
+      <div class="title">${esc(v.title)}</div>
+      <div class="meta">${esc(v.category||"Other")}${v.year?" • "+esc(v.year):""}</div>
       </div>
-      <div class="info">
-        <div class="title">${escapeHtml(v.title || 'Untitled Video')}</div>
-        <div class="meta">${escapeHtml(v.category || 'Other')}${v.year ? ' • '+escapeHtml(v.year):''}</div>
-      </div>
-    </article>`;
-  }).join('');
-  empty.style.display=list.length?'none':'block';
-  grid.querySelectorAll('.card').forEach(c=>c.onclick=()=>openVideo(videos[+c.dataset.index]));
+    </article>`).join("");
+  $("empty").hidden=list.length>0;
 }
-function openVideo(v){
-  const url=previewUrl(v.url);
-  if(!url) return alert('Invalid Google Drive link.');
-  frame.src=url;
-  modal.classList.add('show');
+function setFilter(x){active=x;categories();render();}
+function openPlayer(i){
+  const v=videos[i], src=driveEmbed(v.url);
+  if(!src){alert("No video link found.");return}
+  $("modalTitle").textContent=v.title||"Video";
+  $("frame").src=src;
+  $("modal").classList.add("show");
 }
-function closeVideo(){
-  modal.classList.remove('show');
-  frame.src='about:blank';
-}
-search.oninput=render;
-category.onchange=render;
-document.getElementById('close').onclick=closeVideo;
-modal.onclick=e=>{if(e.target===modal)closeVideo()};
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeVideo()});
+function closePlayer(){$("frame").src="";$("modal").classList.remove("show")}
+$("search").addEventListener("input",render);
+$("modal").addEventListener("click",e=>{if(e.target.id==="modal")closePlayer()});
 
-fetch('videos/videos.json')
- .then(r=>r.json())
- .then(d=>{
-   videos=Array.isArray(d)?d:[];
-   [...new Set(videos.map(v=>v.category||'Other'))].sort().forEach(c=>{
-     const o=document.createElement('option');o.value=c;o.textContent=c;category.appendChild(o);
-   });
-   render();
- })
- .catch(()=>{empty.textContent='Could not load videos/videos.json';empty.style.display='block'});
+fetch("./videos/videos.json").then(r=>r.json()).then(d=>{videos=Array.isArray(d)?d:[];categories();render()})
+.catch(()=>{$("empty").hidden=false;$("empty").textContent="Could not load videos/videos.json";});
 </script>
 </body>
 </html>
