@@ -1,76 +1,38 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>NightFlix — Video Library</title>
+<!doctype html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NightFlix</title>
 <style>
-*{box-sizing:border-box}body{margin:0;background:#07080c;color:#f5f7fb;font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif}
-header{position:sticky;top:0;z-index:10;background:rgba(7,8,12,.88);backdrop-filter:blur(18px);border-bottom:1px solid #1b1e27}
-.nav{max-width:1200px;margin:auto;padding:18px 20px;display:flex;gap:16px;align-items:center}.logo{font-size:23px;font-weight:800;letter-spacing:-.5px}.logo span{color:#7c5cff}
-.search{margin-left:auto;width:min(360px,55vw);background:#11131a;border:1px solid #252936;border-radius:12px;padding:11px 14px;color:white;outline:none}
-main{max-width:1200px;margin:auto;padding:28px 20px 60px}.hero{padding:34px 0 24px}.hero h1{font-size:clamp(32px,6vw,56px);margin:0 0 10px}.hero p{color:#9da4b4;margin:0;max-width:650px}
-.toolbar{display:flex;gap:9px;flex-wrap:wrap;margin:20px 0}.filter{border:1px solid #272b36;background:#11131a;color:#cbd0db;border-radius:999px;padding:8px 14px;cursor:pointer}.filter.active{background:#7c5cff;border-color:#7c5cff;color:white}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:18px}.card{background:#101219;border:1px solid #20232d;border-radius:16px;overflow:hidden;cursor:pointer;transition:.2s}.card:hover{transform:translateY(-3px);border-color:#393e4d}.thumb{aspect-ratio:16/10;background:#171a22;display:grid;place-items:center;color:#6f7686;font-size:36px}.info{padding:14px}.title{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.meta{font-size:13px;color:#858c9b;margin-top:7px}
-.empty{text-align:center;padding:70px 10px;color:#858c9b}.modal{position:fixed;inset:0;background:rgba(0,0,0,.8);display:none;align-items:center;justify-content:center;padding:18px;z-index:30}.modal.show{display:flex}.box{width:min(1050px,100%);background:#0d0f15;border:1px solid #282c38;border-radius:18px;overflow:hidden}.player{aspect-ratio:16/9;background:#000}.player iframe{width:100%;height:100%;border:0}.modalbar{padding:14px 16px;display:flex;align-items:center;gap:12px}.modalbar h2{margin:0;font-size:18px}.close{margin-left:auto;background:#20232d;border:0;color:#fff;border-radius:10px;padding:9px 13px;cursor:pointer}
-@media(max-width:600px){.nav{padding:14px}.search{width:48vw}.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.info{padding:11px}.hero{padding-top:20px}}
-</style>
-</head>
+*{box-sizing:border-box}body{margin:0;background:#07080c;color:#f5f7fb;font-family:system-ui,sans-serif}
+header{position:sticky;top:0;z-index:10;background:#08090dcc;backdrop-filter:blur(15px);border-bottom:1px solid #20232d}
+.nav,main{max-width:1200px;margin:auto}.nav{padding:16px 20px;display:flex;align-items:center;gap:15px}.logo{font-size:23px;font-weight:800}.logo span{color:#7c5cff}
+.search{margin-left:auto;width:min(360px,55vw);padding:11px 14px;border-radius:12px;border:1px solid #292d38;background:#11131a;color:white}
+main{padding:28px 20px 60px}.hero h1{font-size:clamp(32px,6vw,54px);margin:15px 0 8px}.hero p{color:#9da4b4}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:20px 0}.filter{background:#11131a;color:#ccd1dc;border:1px solid #292d38;border-radius:99px;padding:8px 14px}.active{background:#7c5cff;color:#fff;border-color:#7c5cff}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:18px}.card{background:#101219;border:1px solid #20232d;border-radius:16px;overflow:hidden;cursor:pointer;transition:.2s}.card:hover{transform:translateY(-3px);border-color:#454b5c}
+.preview{position:relative;aspect-ratio:16/10;background:#171a22;overflow:hidden}.preview video{width:100%;height:100%;object-fit:cover}.fallback{position:absolute;inset:0;display:grid;place-items:center;font-size:38px;color:#687082}.fallback.hide{display:none}.badge{position:absolute;left:8px;bottom:8px;background:#000b;padding:4px 7px;border-radius:6px;font-size:11px}
+.info{padding:13px}.title{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.meta{font-size:13px;color:#858c9b;margin-top:6px}
+.empty{text-align:center;padding:70px;color:#858c9b}.modal{position:fixed;inset:0;background:#000d;display:none;align-items:center;justify-content:center;padding:18px;z-index:30}.modal.show{display:flex}.box{width:min(1050px,100%);background:#0d0f15;border:1px solid #292d38;border-radius:18px;overflow:hidden}.player{aspect-ratio:16/9;background:#000}.player video{width:100%;height:100%}.modalbar{padding:14px;display:flex;align-items:center}.close{margin-left:auto;background:#222631;color:#fff;border:0;border-radius:9px;padding:9px 13px}
+@media(max-width:600px){.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.info{padding:10px}}
+</style></head>
 <body>
 <header><div class="nav"><div class="logo">Night<span>Flix</span></div><input id="search" class="search" placeholder="Search videos..."></div></header>
-<main>
-<section class="hero"><h1>Your video library.</h1><p>Add your video title and Google Drive link inside <b>videos/videos.json</b>. The website will automatically display them here.</p></section>
-<div class="toolbar" id="filters"></div>
-<section id="grid" class="grid"></section>
-<div id="empty" class="empty" hidden>No videos found.</div>
-</main>
-<div id="modal" class="modal"><div class="box"><div class="player"><iframe id="frame" allow="autoplay; fullscreen" allowfullscreen></iframe></div><div class="modalbar"><h2 id="modalTitle"></h2><button class="close" onclick="closePlayer()">Close</button></div></div></div>
+<main><section class="hero"><h1>Your video library.</h1><p>Short video previews play automatically when cards enter the screen.</p></section>
+<div id="filters" class="toolbar"></div><section id="grid" class="grid"></section><div id="empty" class="empty" hidden>No videos found.</div></main>
+<div id="modal" class="modal"><div class="box"><div class="player"><video id="mainVideo" controls playsinline></video></div><div class="modalbar"><b id="modalTitle"></b><button class="close" onclick="closePlayer()">Close</button></div></div></div>
 <script>
-let videos=[], active="All";
-const $=id=>document.getElementById(id);
-
-function driveEmbed(url){
-  if(!url) return "";
-  // Supports normal Drive sharing URLs and already-embedded URLs.
-  const m=url.match(/\/file\/d\/([^/]+)/);
-  if(m) return `https://drive.google.com/file/d/${m[1]}/preview`;
-  const id=url.match(/[?&]id=([^&]+)/);
-  if(id) return `https://drive.google.com/file/d/${id[1]}/preview`;
-  if(url.includes("drive.google.com")) return url.replace(/\/view.*$/,"/preview");
-  return url;
-}
-function categories(){
-  const set=["All",...new Set(videos.map(v=>v.category||"Other"))];
-  $("filters").innerHTML=set.map(x=>`<button class="filter ${x===active?"active":""}" onclick="setFilter('${esc(x)}')">${esc(x)}</button>`).join("");
-}
-function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
-function render(){
-  const q=$("search").value.trim().toLowerCase();
-  const list=videos.filter(v=>(active==="All"||(v.category||"Other")===active)&&
-    (`${v.title} ${v.category||""} ${v.description||""}`).toLowerCase().includes(q));
-  $("grid").innerHTML=list.map((v,i)=>`
-    <article class="card" onclick="openPlayer(${videos.indexOf(v)})">
-      <div class="thumb">▶</div><div class="info">
-      <div class="title">${esc(v.title)}</div>
-      <div class="meta">${esc(v.category||"Other")}${v.year?" • "+esc(v.year):""}</div>
-      </div>
-    </article>`).join("");
-  $("empty").hidden=list.length>0;
-}
-function setFilter(x){active=x;categories();render();}
-function openPlayer(i){
-  const v=videos[i], src=driveEmbed(v.url);
-  if(!src){alert("No video link found.");return}
-  $("modalTitle").textContent=v.title||"Video";
-  $("frame").src=src;
-  $("modal").classList.add("show");
-}
-function closePlayer(){$("frame").src="";$("modal").classList.remove("show")}
-$("search").addEventListener("input",render);
-$("modal").addEventListener("click",e=>{if(e.target.id==="modal")closePlayer()});
-
-fetch("./videos/videos.json").then(r=>r.json()).then(d=>{videos=Array.isArray(d)?d:[];categories();render()})
-.catch(()=>{$("empty").hidden=false;$("empty").textContent="Could not load videos/videos.json";});
-</script>
-</body>
-</html>
+let videos=[],active="All",observer;
+const $=x=>document.getElementById(x);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function drive(u){let m=(u||"").match(/[?&]id=([^&]+)/);return m?"https://drive.google.com/uc?export=download&id="+m[1]:u||""}
+function cats(){let a=["All",...new Set(videos.map(v=>v.category||"Other"))];$("filters").innerHTML=a.map(x=>`<button class="filter ${x==active?"active":""}" onclick="setFilter('${esc(x)}')">${esc(x)}</button>`).join("")}
+function setFilter(x){active=x;cats();render()}
+function render(){let q=$("search").value.toLowerCase(),list=videos.filter(v=>(active=="All"||(v.category||"Other")==active)&&(`${v.title||""} ${v.category||""}`).toLowerCase().includes(q));
+$("grid").innerHTML=list.map(v=>{let i=videos.indexOf(v);return `<article class="card" onclick="openPlayer(${i})"><div class="preview"><div class="fallback">▶</div><video class="pv" muted playsinline preload="metadata" src="${esc(drive(v.url))}"></video><span class="badge">PREVIEW</span></div><div class="info"><div class="title">${esc(v.title||"Untitled Video")}</div><div class="meta">${esc(v.category||"Other")}</div></div></article>`}).join("");
+$("empty").hidden=list.length>0;setup()}
+function setup(){if(observer)observer.disconnect();observer=new IntersectionObserver(es=>es.forEach(e=>{let v=e.target.querySelector(".pv");if(e.isIntersecting)preview(v);else{v.pause();v.removeAttribute("src");v.load();delete v.dataset.loaded}}),{rootMargin:"250px"});document.querySelectorAll(".card").forEach(c=>observer.observe(c))}
+function preview(v){if(v.dataset.loaded)return;v.dataset.loaded=1;v.addEventListener("loadedmetadata",()=>{let d=v.duration||6,mid=Math.max(0,d/2-1.5),end=Math.min(d,mid+3);v.currentTime=0;v.play().catch(()=>{});v.ontimeupdate=()=>{if(!v.dataset.mid&&v.currentTime>=Math.min(2,d)-.04){v.dataset.mid=1;v.currentTime=mid}else if(v.dataset.mid&&v.currentTime>=end-.04){v.dataset.mid="";v.currentTime=0}}},{once:true});v.addEventListener("canplay",()=>v.parentElement.querySelector(".fallback").classList.add("hide"),{once:true})}
+function openPlayer(i){let v=videos[i];$("modalTitle").textContent=v.title||"Untitled Video";let p=$("mainVideo");p.src=drive(v.url);$("modal").classList.add("show");p.play().catch(()=>{})}
+function closePlayer(){let p=$("mainVideo");p.pause();p.removeAttribute("src");p.load();$("modal").classList.remove("show")}
+$("search").oninput=render;$("modal").onclick=e=>{if(e.target.id=="modal")closePlayer()};
+fetch("./videos/videos.json").then(r=>r.json()).then(d=>{videos=d;cats();render()}).catch(()=>{$("empty").hidden=false})
+</script></body></html>
