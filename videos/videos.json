@@ -1,1 +1,9 @@
-
+[
+  {
+    "title": "Example Video",
+    "url": "https://drive.google.com/file/d/YOUR_FILE_ID/view?usp=sharing",
+    "category": "Other",
+    "year": "2026",
+    "description": "Replace this example with your own video."
+  }
+]
