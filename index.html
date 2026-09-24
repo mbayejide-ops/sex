@@ -1,5 +1,5 @@
 <!doctype html>
-<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="no-referrer">
 <title>NightFlix</title>
 <style>
 *{box-sizing:border-box}body{margin:0;background:#07080c;color:#f5f7fb;font-family:system-ui,sans-serif}
@@ -58,9 +58,10 @@ let c=[...document.querySelectorAll(".card")].map(el=>{let r=el.getBoundingClien
 let on=new Set(c.filter(x=>x.vis).sort((a,b)=>a.d-b.d).slice(0,3).map(x=>x.el));
 c.forEach(x=>{let v=x.el.querySelector(".pv");if(on.has(x.el))play(v);else{v.pause();if(x.r.bottom<-vh||x.r.top>2*vh)unload(v)}})}
 function sched(){if(tick)return;tick=requestAnimationFrame(()=>{tick=0;update()})}
-let cur="";
+let cur="",tryN=0;
+function urls(u){let id=gid(u);return id?["https://drive.usercontent.google.com/download?id="+id+"&export=download&confirm=t","https://drive.google.com/uc?export=download&id="+id+"&confirm=t","https://docs.google.com/uc?export=download&id="+id+"&confirm=t"]:[u||""]}
 function openPlayer(i){let v=videos[i],p=$("mainVideo"),f=$("mainFrame"),m=$("modal");document.querySelectorAll(".pv").forEach(unload);
-cur=v.url;$("modalTitle").textContent=v.title||"Untitled Video";f.hidden=true;f.removeAttribute("src");p.hidden=false;p.muted=false;p.src=drive(v.url);m.classList.add("show");p.play().catch(()=>{});
+cur=v.url;$("modalTitle").textContent=v.title||"Untitled Video";f.hidden=true;f.removeAttribute("src");p.hidden=false;p.muted=false;tryN=0;p.src=urls(v.url)[0];m.classList.add("show");p.play().catch(()=>{});
 let fsp;try{let fs=m.requestFullscreen||m.webkitRequestFullscreen;fsp=fs?Promise.resolve(fs.call(m)):Promise.reject()}catch(e){fsp=Promise.reject()}
 fsp.then(()=>{let o=screen.orientation;return o&&o.lock?o.lock("landscape"):Promise.reject()}).catch(()=>{if(innerHeight>innerWidth)m.classList.add("rot")})}
 function unrot(){$("modal").classList.remove("rot");try{screen.orientation&&screen.orientation.unlock&&screen.orientation.unlock()}catch(e){}}
@@ -71,7 +72,8 @@ p.addEventListener("contextmenu",e=>e.preventDefault());
 p.addEventListener("play",()=>pp.classList.remove("on"));
 p.addEventListener("pause",()=>{if($("modal").classList.contains("show"))pp.classList.add("on")});
 p.addEventListener("enterpictureinpicture",()=>{document.exitPictureInPicture&&document.exitPictureInPicture().catch(()=>{})})})();
-$("mainVideo").addEventListener("error",()=>{let p=$("mainVideo"),id=gid(cur);if(p.getAttribute("src")&&id){p.hidden=true;$("pp").classList.remove("on");$("mainFrame").hidden=false;$("mainFrame").src="https://drive.google.com/file/d/"+id+"/preview"}});
+$("mainVideo").addEventListener("error",()=>{let p=$("mainVideo"),id=gid(cur),c=urls(cur),code=p.error?p.error.code:0;if(p.getAttribute("src")&&id){if(tryN<c.length-1){tryN++;p.src=c[tryN];p.play().catch(()=>{});return}
+$("modalTitle").textContent+=" (Drive player, err "+code+")";p.hidden=true;$("pp").classList.remove("on");$("mainFrame").hidden=false;$("mainFrame").src="https://drive.google.com/file/d/"+id+"/preview"}});
 function closePlayer(){let p=$("mainVideo"),f=$("mainFrame");p.pause();p.removeAttribute("src");p.load();f.removeAttribute("src");f.hidden=true;p.hidden=false;$("pp").classList.remove("on");unrot();$("modal").classList.remove("show");
 if(document.fullscreenElement)document.exitFullscreen().catch(()=>{});update()}
 document.addEventListener("fullscreenchange",()=>{if(!document.fullscreenElement&&$("modal").classList.contains("show"))closePlayer()});
