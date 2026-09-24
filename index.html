@@ -18,7 +18,7 @@ main{padding:28px 20px 60px}.hero h1{font-size:clamp(32px,6vw,54px);margin:15px 
 .m{display:flex;align-items:center;gap:8px;margin-top:6px}.m svg{width:20px;height:20px;fill:#858c9b;flex:none}.r{text-align:right}.r .m{justify-content:flex-end}.r .lk,.r .lk svg{color:#3b82f6;fill:#3b82f6}
 .empty{text-align:center;padding:70px;color:#858c9b}
 .modal{position:fixed;inset:0;background:#000;display:none;z-index:30}.modal.show{display:block}
-.box{position:relative;width:100%;height:100%}.player,.player video{width:100%;height:100%;background:#000}.player{position:relative}.player video{object-fit:contain;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.box{position:relative;width:100%;height:100%}.modal.rot .box{position:absolute;left:50%;top:50%;width:100vh;width:100dvh;height:100vw;height:100dvw;transform:translate(-50%,-50%) rotate(90deg)}.player,.player video{width:100%;height:100%;background:#000}.player{position:relative}.player video{object-fit:contain;cursor:pointer;-webkit-tap-highlight-color:transparent}
 .pp{position:absolute;left:50%;top:50%;width:84px;height:84px;margin:-42px 0 0 -42px;border-radius:50%;background:#0009;display:none;place-items:center;pointer-events:none}.pp.on{display:grid}.pp svg{width:44px;height:44px;fill:#fff}
 .modalbar{position:absolute;left:0;right:0;top:0;padding:14px;display:flex;align-items:center;gap:12px;background:linear-gradient(#000c,transparent);pointer-events:none}
 .modalbar b{overflow:hidden;white-space:nowrap;text-overflow:ellipsis}.close{margin-left:auto;background:#222631;color:#fff;border:0;border-radius:9px;padding:9px 13px;pointer-events:auto}
@@ -61,7 +61,10 @@ function sched(){if(tick)return;tick=requestAnimationFrame(()=>{tick=0;update()}
 let cur="";
 function openPlayer(i){let v=videos[i],p=$("mainVideo"),f=$("mainFrame"),m=$("modal");document.querySelectorAll(".pv").forEach(unload);
 cur=v.url;$("modalTitle").textContent=v.title||"Untitled Video";f.hidden=true;f.removeAttribute("src");p.hidden=false;p.muted=false;p.src=drive(v.url);m.classList.add("show");p.play().catch(()=>{});
-try{let fs=m.requestFullscreen||m.webkitRequestFullscreen;fs&&Promise.resolve(fs.call(m)).catch(()=>{})}catch(e){}}
+let fsp;try{let fs=m.requestFullscreen||m.webkitRequestFullscreen;fsp=fs?Promise.resolve(fs.call(m)):Promise.reject()}catch(e){fsp=Promise.reject()}
+fsp.then(()=>{let o=screen.orientation;return o&&o.lock?o.lock("landscape"):Promise.reject()}).catch(()=>{if(innerHeight>innerWidth)m.classList.add("rot")})}
+function unrot(){$("modal").classList.remove("rot");try{screen.orientation&&screen.orientation.unlock&&screen.orientation.unlock()}catch(e){}}
+addEventListener("resize",()=>{if(innerWidth>innerHeight)$("modal").classList.remove("rot")});
 (()=>{let p=$("mainVideo"),pp=$("pp");
 p.addEventListener("click",()=>{p.paused?p.play().catch(()=>{}):p.pause()});
 p.addEventListener("contextmenu",e=>e.preventDefault());
@@ -69,7 +72,7 @@ p.addEventListener("play",()=>pp.classList.remove("on"));
 p.addEventListener("pause",()=>{if($("modal").classList.contains("show"))pp.classList.add("on")});
 p.addEventListener("enterpictureinpicture",()=>{document.exitPictureInPicture&&document.exitPictureInPicture().catch(()=>{})})})();
 $("mainVideo").addEventListener("error",()=>{let p=$("mainVideo"),id=gid(cur);if(p.getAttribute("src")&&id){p.hidden=true;$("pp").classList.remove("on");$("mainFrame").hidden=false;$("mainFrame").src="https://drive.google.com/file/d/"+id+"/preview"}});
-function closePlayer(){let p=$("mainVideo"),f=$("mainFrame");p.pause();p.removeAttribute("src");p.load();f.removeAttribute("src");f.hidden=true;p.hidden=false;$("pp").classList.remove("on");$("modal").classList.remove("show");
+function closePlayer(){let p=$("mainVideo"),f=$("mainFrame");p.pause();p.removeAttribute("src");p.load();f.removeAttribute("src");f.hidden=true;p.hidden=false;$("pp").classList.remove("on");unrot();$("modal").classList.remove("show");
 if(document.fullscreenElement)document.exitFullscreen().catch(()=>{});update()}
 document.addEventListener("fullscreenchange",()=>{if(!document.fullscreenElement&&$("modal").classList.contains("show"))closePlayer()});
 addEventListener("scroll",sched,{passive:true});addEventListener("resize",sched);
